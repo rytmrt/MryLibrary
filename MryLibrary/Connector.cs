@@ -15,9 +15,9 @@ namespace Mry
 	/// <summary>
 	/// Game connector.
 	/// </summary>
-	public class GameConnector
+	public class Connector
 	{
-		
+
 		/// <summary>
 		/// Receivable.
 		/// </summary>
@@ -31,7 +31,7 @@ namespace Mry
 			/// </param>
 			void OnReceive (object data);
 		}
-		
+
 		/// <summary>
 		/// Server infomation.
 		/// </summary>
@@ -41,12 +41,12 @@ namespace Mry
 			/// The name.
 			/// </summary>
 			public string name;
-			
+
 			/// <summary>
 			/// The host.
 			/// </summary>
 			public string host;
-			
+
 			/// <summary>
 			/// The port.
 			/// </summary>
@@ -57,14 +57,25 @@ namespace Mry
 		/// <summary>
 		/// Server connector.
 		/// </summary>
-		class ServerConnector : Connection.IReceivable
+		class ServerConnector : BaseConnection.IReceivable
 		{
-			private Connection con;
-			private Dictionary<string, IReceivable> receiveListener;
-			private Dictionary<string, object> sendData;
+			/// <summary>
+			/// The connection.
+			/// </summary>
+			private BaseConnection con;
 			
 			/// <summary>
-			/// Initializes a new instance of the <see cref="Mry.GameConnector.ServerConnector"/> class.
+			/// The receive listener.
+			/// </summary>
+			private Dictionary<string, IReceivable> receiveListener;
+			
+			/// <summary>
+			/// The send data.
+			/// </summary>
+			private Dictionary<string, object> sendData;
+
+			/// <summary>
+			/// Initializes a new instance of the <see cref="Mry.Connector.ServerConnector"/> class.
 			/// </summary>
 			/// <param name='host'>
 			/// Host.
@@ -74,12 +85,15 @@ namespace Mry
 			/// </param>
 			public ServerConnector (string host, long port)
 			{
-				con = new Connection (host, port);
+				con = new BaseConnection (host, port);
 				con.SetReceivable(this);
 				receiveListener = new Dictionary<string, IReceivable> ();
 				sendData = new Dictionary<string, object> ();
 			}
 			
+			/// <summary>
+			/// Close this connection.
+			/// </summary>
 			public void Close ()
 			{
 				con.Close();
@@ -98,7 +112,7 @@ namespace Mry
 			{
 				receiveListener [key] = receive;
 			}
-			
+
 			/// <summary>
 			/// Adds the send data.
 			/// </summary>
@@ -112,7 +126,7 @@ namespace Mry
 			{
 				sendData [key] = data;
 			}
-			
+
 			/// <summary>
 			///Ssend the object in stack.
 			/// </summary>
@@ -122,7 +136,7 @@ namespace Mry
 				con.Send (str);
 				sendData.Clear ();
 			}
-			
+
 			/// <summary>
 			/// Receive the msg.
 			/// </summary>
@@ -135,25 +149,43 @@ namespace Mry
 				receiveListener [(string)obj ["on"]].OnReceive (obj["contents"]);
 			}
 		}
-		
+
 		/// <summary>
 		/// The servers.
 		/// </summary>
 		private Dictionary<string, ServerConnector> servers;
 		
+		/// <summary>
+		/// The server info.
+		/// </summary>
 		private Dictionary<string, ServerInfo> serverInfo;
 		
-		
 		/// <summary>
-		/// Initializes a new instance of the <see cref="Mry.GameConnector"/> class.
-		/// </summary>hn5b   nv
-		public GameConnector (string confJsonPath)
+		/// The instance.
+		/// </summary>
+		private static Connector instance;
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="Mry.Connector"/> class.
+		/// </summary>
+		private Connector ()
 		{
 			servers = new Dictionary<string, ServerConnector> ();
 			serverInfo = new Dictionary<string, ServerInfo> ();
-			CreateServerInfo(confJsonPath);
 		}
-		
+
+		/// /// <summary>
+		/// Gets the instance on Connector.
+		/// </summary>
+		/// <returns>
+		/// The instance.
+		/// </returns>
+		public static Connector GetInstance()
+		{
+			if (instance == null) instance = new Connector();
+			return instance;
+		}
+
 		/// <summary>
 		/// Sets the receive listener.
 		/// </summary>
@@ -170,7 +202,7 @@ namespace Mry
 		{
 			servers [server].SetReceiveListener (key, receivable);
 		}
-		
+
 		/// <summary>
 		/// Adds the send data.
 		/// </summary>
@@ -187,7 +219,7 @@ namespace Mry
 		{
 			servers [server].AddSendData (key, data);
 		}
-		
+
 		/// <summary>
 		/// Send to the specified server.
 		/// </summary>
@@ -198,7 +230,7 @@ namespace Mry
 		{
 			servers [server].Send ();
 		}
-		
+
 		/// <summary>
 		/// Creates the connection.
 		/// </summary>
@@ -211,12 +243,13 @@ namespace Mry
 		public bool CreateConnection (string name)
 		{
 			if (serverInfo.ContainsKey(name)) {
-				servers[name] = new ServerConnector(serverInfo[name].host, serverInfo[name].port);
+				servers[name] = new ServerConnector(serverInfo[name].host,
+					serverInfo[name].port);
 				return true;
 			}
 			return false;
 		}
-		
+
 		/// <summary>
 		/// Close the specified server.
 		/// </summary>
@@ -227,25 +260,27 @@ namespace Mry
 		{
 			servers[name].Close();
 		}
-		
+
 		/// <summary>
-		/// Creates the server info.
+		/// Sets the server info.
 		/// </summary>
-		private void CreateServerInfo (string path)
+		/// <param name='confPath'>
+		/// Config path.
+		/// </param>
+		public void SetServerInfo (string confPath)
 		{
-			string config =System.IO.File.ReadAllText(path);
-			
+			string config =System.IO.File.ReadAllText(confPath);
+
 			var objs = Json.Deserialize (config) as List<object>;
 
 			foreach (var i in objs) {
 				var obj = i as Dictionary<string, object>;
-				
+
 				ServerInfo svinfo = new ServerInfo();
 				svinfo.name = (string)obj["name"];
 				svinfo.host = (string)obj["host"];
 				svinfo.port = (Int64)obj["port"];
 				serverInfo[svinfo.name] = svinfo;
- 				//servers [(string)obj["name"]] = new ServerConnector ((string)obj["host"], (Int64)obj["port"]);
 			}
 		}
 	}

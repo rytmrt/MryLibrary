@@ -1,5 +1,5 @@
 /*----------------------------------------------------------------------------*
- * Connection.cs
+ * BaseConnection.cs
  * ver 1.0.0 (Apr. 30, 2013)
  *
  * created and maintained by RYOTA MORITA <ryota.morita.3.8@gmail.com>
@@ -15,9 +15,9 @@ using System.Threading;
 namespace Mry
 {
 	/// <summary>
-	/// Connection.
+	/// BaseConnection.
 	/// </summary>
-    public class Connection
+    public class BaseConnection 
 	{
 		/// <summary>
 		/// Receivable.
@@ -32,35 +32,35 @@ namespace Mry
 			/// </param>
 			void Receive(string msg);
 		}
-		
+
         /// <summary>
         /// The client.
         /// </summary>
 		private TcpClient client;
-		
+
         /// <summary>
         /// The stream.
         /// </summary>
         private NetworkStream stream;
-		
+
 		/// <summary>
 		/// The receive thread.
 		/// </summary>
 		private Thread receiveThread;
-		
+
 		/// <summary>
 		/// The receiver.
 		/// </summary>
 		private IReceivable receiver;
-		
+
 		/// <summary>
 		/// The is closed.
 		/// </summary>
 		private bool isClosed;
-		
-		
-		/// <summary>
-		/// Initializes a new instance of the <see cref="Mry.Connection"/> class.
+
+
+		/// /// <summary>
+		/// Initializes a new instance of the <see cref="Mry.BaseConnection"/> class.
 		/// </summary>
 		/// <param name='host'>
 		/// Host.
@@ -68,7 +68,7 @@ namespace Mry
 		/// <param name='port'>
 		/// Port.
 		/// </param>
-        public Connection(string host, long port)
+        public BaseConnection(string host, long port)
 		{
 			isClosed = false;
             client = new TcpClient(host, (int)port);
@@ -77,7 +77,7 @@ namespace Mry
 			receiveThread =  new Thread(new ThreadStart(Receive));
 			receiveThread.Start();
         }
-		
+
 		/// <summary>
 		/// Send the specified msg.
 		/// </summary>
@@ -89,15 +89,15 @@ namespace Mry
 			byte[] data = Encoding.UTF8.GetBytes(msg);
             stream.Write(data, 0, data.Length);
         }
-		
+
 		/// <summary>
-		/// Close this instance.
+		/// Close the receiveThread.
 		/// </summary>
 		public void Close()
 		{
 			isClosed = true;
 		}
-		
+
 		/// <summary>
 		/// Sets the receivable.
 		/// </summary>
@@ -108,14 +108,14 @@ namespace Mry
 		{
 			this.receiver = receiver;
 		}
-		
+
 		/// <summary>
 		/// Receive the message from server
 		/// </summary>
 		private void Receive()
-		{	
+		{
 			byte[] data = new byte[256];
-			
+
 			while (!isClosed) {
 				stream.Read(data, 0, data.Length);
 				if (receiver != null) {

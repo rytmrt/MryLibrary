@@ -34,9 +34,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
-    <Compile Include="Connection.cs" />
-    <Compile Include="GameConnector.cs" />
     <Compile Include="MiniJSON.cs" />
+    <Compile Include="Connector.cs" />
+    <Compile Include="BaseConnection.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

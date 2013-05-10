@@ -7,7 +7,7 @@ namespace Test
 {
 	class MainClass
 	{
-		class Test : GameConnector.IReceivable
+		class Test : Connector.IReceivable
 		{
 			public void OnReceive (object data)
 			{
@@ -18,7 +18,10 @@ namespace Test
 		
 		public static void Main (string[] args)
 		{
-			GameConnector gameConnector = new GameConnector(@"./conf.json");
+			Connector gameConnector = Connector.GetInstance();
+			
+			gameConnector.SetServerInfo(@"./conf.json");
+			
 			gameConnector.CreateConnection("gmsv");
 			
 			gameConnector.SetReceiveListener("gmsv","test",new MainClass.Test());

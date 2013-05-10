@@ -6,7 +6,7 @@ MryLibrary is communication library.
 
 Server configuration in JSON format.
 
-``` config.json
+```
 [
 	{
 		"name" : "gmsv",
