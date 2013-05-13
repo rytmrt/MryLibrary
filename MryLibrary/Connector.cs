@@ -1,6 +1,6 @@
 /*----------------------------------------------------------------------------*
  * GameConnection.cs
- * ver 1.0.0 (May. 2, 2013)
+ * ver 1.0.2 (May. 13, 2013)
  *
  * created and maintained by RYOTA MORITA <ryota.morita.3.8@gmail.com>
  * copyright(c) 2013 RYOTA MORITA
@@ -270,7 +270,7 @@ namespace Mry
 		public void SetServerInfo (string confPath)
 		{
 			//string config =System.IO.File.ReadAllText(confPath);
-			var sr = new System.IO.StreamReader(path);
+			var sr = new System.IO.StreamReader(confPath);
 			var config = sr.ReadToEnd();
 			sr.Close();
 
