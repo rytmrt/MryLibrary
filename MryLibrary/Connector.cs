@@ -63,12 +63,12 @@ namespace Mry
 			/// The connection.
 			/// </summary>
 			private BaseConnection con;
-			
+
 			/// <summary>
 			/// The receive listener.
 			/// </summary>
 			private Dictionary<string, IReceivable> receiveListener;
-			
+
 			/// <summary>
 			/// The send data.
 			/// </summary>
@@ -90,7 +90,7 @@ namespace Mry
 				receiveListener = new Dictionary<string, IReceivable> ();
 				sendData = new Dictionary<string, object> ();
 			}
-			
+
 			/// <summary>
 			/// Close this connection.
 			/// </summary>
@@ -154,12 +154,12 @@ namespace Mry
 		/// The servers.
 		/// </summary>
 		private Dictionary<string, ServerConnector> servers;
-		
+
 		/// <summary>
 		/// The server info.
 		/// </summary>
 		private Dictionary<string, ServerInfo> serverInfo;
-		
+
 		/// <summary>
 		/// The instance.
 		/// </summary>
@@ -269,7 +269,10 @@ namespace Mry
 		/// </param>
 		public void SetServerInfo (string confPath)
 		{
-			string config =System.IO.File.ReadAllText(confPath);
+			//string config =System.IO.File.ReadAllText(confPath);
+			var sr = new System.IO.StreamReader(path);
+			var config = sr.ReadToEnd();
+			sr.Close();
 
 			var objs = Json.Deserialize (config) as List<object>;
 

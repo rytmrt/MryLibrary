@@ -1,11 +1,12 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="MryLibrary/README.md">
+  <MonoDevelop.Ide.Workbench ActiveDocument="MryLibrary/Connector.cs">
     <Files>
       <File FileName="Test/conf.Json" Line="7" Column="2" />
-      <File FileName="Test/Main.cs" Line="27" Column="55" />
-      <File FileName="MryLibrary/Connection.cs" Line="126" Column="19" />
+      <File FileName="Test/Main.cs" Line="22" Column="4" />
       <File FileName="MryLibrary/README.md" Line="9" Column="4" />
+      <File FileName="MryLibrary/Connector.cs" Line="74" Column="18" />
+      <File FileName="MryLibrary/BaseConnection.cs" Line="8" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
